@@ -1,0 +1,7 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="1. Core.lua"/>
+	<Script file="2. Commands.lua"/>
+	<Script file="3. UI Layout.lua"/>
+	<Script file="4. Embed MeterAddOns.lua"/>
+	<Script file="5. KnightInspect.lua"/>
+</Ui>

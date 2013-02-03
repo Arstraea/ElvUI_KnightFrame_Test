@@ -1,0 +1,5 @@
+<Bindings>
+  	<Binding name="InspectMouseover" header="KnightFrame">
+  		InspectUnit('mouseover');
+  	</Binding>
+</Bindings>

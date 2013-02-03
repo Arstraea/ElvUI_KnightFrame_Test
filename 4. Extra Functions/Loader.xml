@@ -1,0 +1,11 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="ItemLevel.lua"/>
+	<Script file="RealValue.lua"/>
+	<Script file="ShowChatTab.lua"/>
+	<Script file="TooltipTalent.lua"/>
+	<Script file="ToggleAuraTimer.lua"/>
+	<Script file="AuraTracker.lua"/>	
+	<Script file="SpellAlert.lua"/>
+	<Script file="ToggleQuest.lua"/>
+	<Include file="RaidCooldown\Loader.xml"/>
+</Ui>

@@ -1,0 +1,19 @@
+## Interface: 50001
+## Title: |cff1784d1ElvUI |r|cffffffffKnight Frame|r |cffffdc3cv2.0
+## Author: Arstraea
+## Version: 2.0
+## eMail: qjr2513@naver.com
+## SavedVariables: KnightFrameDB
+## RequiredDeps: ElvUI
+## OptionalDeps: ACP, Skada, Recount, Omen, BlueItemInfo3, DBM-Core, Findparty, InvenCraftInfo2
+## DefaultState: Enabled
+## Notes: Custom User Interface of Elv UI 4.xx version by Arstraea
+
+KnightFrame.lua
+3. Locales\Loader.xml
+2. Profiles\Loader.xml
+1. Core\Loader.xml
+5. Media & Skin\Loader.xml
+4. Extra Functions\Loader.xml
+6. Development Kit\Loader.xml
+Initialize.lua

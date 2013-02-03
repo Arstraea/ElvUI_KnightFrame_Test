@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="SpellList.lua"/>
+	<Script file="BuffTracker.lua"/>
+	<Script file="TargetAuraTracker.lua"/>
+</Ui>
