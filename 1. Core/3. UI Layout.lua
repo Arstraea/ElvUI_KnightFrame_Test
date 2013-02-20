@@ -226,6 +226,64 @@ if KF.UIParent then
 		--<< ExpRep System >>
 		if KF.db.Panel_Options.ExpRep ~= false then
 			local M = E:GetModule('Misc')
+			
+			local function ToggleExpRepTooltip(ToggleType)
+				if ToggleType == 'SHOW' and ElvUI_ReputationBar:IsShown() then
+					RepTooltip:Show()
+					ReputationBarMover:ClearAllPoints()
+					ReputationBarMover:Point('TOPLEFT', RepTooltip, 'BOTTOMLEFT', 2, PANEL_HEIGHT - 2)
+					ReputationBarMover:Point('BOTTOMRIGHT', RepTooltip, -2, 2)
+					ElvUI_ReputationBar:SetFrameStrata('HIGH')
+					ElvUI_ReputationBar:SetFrameLevel(4)
+					ElvUI_ReputationBar:Size(ReputationBarMover:GetWidth(), ReputationBarMover:GetHeight())
+				elseif ToggleType == 'HIDE' or not ElvUI_ReputationBar:IsShown() then
+					RepTooltip:Hide()
+					M:UpdateReputation()
+					M:UpdateExpRepAnchors()
+				end
+				
+				if ExpTooltip then
+					if ToggleType == 'SHOW' and ElvUI_ExperienceBar:IsShown() then
+						ExpTooltip:Show()
+						if ElvUI_ReputationBar:IsShown() then
+							ExpTooltip:Point('BOTTOM', RepTooltip, 'TOP', 0, -1)
+						else
+							ExpTooltip:Point('BOTTOM', ExpRepSensor)
+						end
+						ExperienceBarMover:ClearAllPoints()
+						ExperienceBarMover:Point('TOPLEFT', ExpTooltip, 'BOTTOMLEFT', 2, PANEL_HEIGHT - 2)
+						ExperienceBarMover:Point('BOTTOMRIGHT', ExpTooltip, -2, 2)
+						ElvUI_ExperienceBar:SetFrameStrata('HIGH')
+						ElvUI_ExperienceBar:SetFrameLevel(4)
+						ElvUI_ExperienceBar:Size(ExperienceBarMover:GetWidth(), ExperienceBarMover:GetHeight())					
+					elseif ToggleType == 'HIDE' or not ElvUI_ExprerienceBar:IsShown() then
+						ExpTooltip:Hide()
+						M:UpdateExperience()
+						M:UpdateExpRepAnchors()
+					end
+				end
+			end
+			
+			local function ExpRepTooltipLock(ToggleType)
+				if ToggleType == 'Lock' and RepTooltip:IsShown() then
+					RepTooltip:SetBackdropBorderColor(0.1, 0.36, 0.75)
+					RepTooltip.Title:SetText('< '..KF:Color('Reputation')..' > |cffceff00LOCKED!!|r')
+				elseif ToggleType == 'Unlock' or not ElvUI_ReputationBar:IsShown() then
+					RepTooltip:SetBackdropBorderColor(unpack(E.media.bordercolor))
+					RepTooltip.Title:SetText('< '..KF:Color('Reputation')..' >')
+				end
+				
+				if ExpTooltip then
+					if ToggleType == 'Lock' and ExpTooltip:IsShown() then
+						ExpTooltip:SetBackdropBorderColor(0.1, 0.36, 0.75)
+						ExpTooltip.Title:SetText('< '..KF:Color('Experience')..' > |cffceff00LOCKED!!|r')
+					elseif ToggleType == 'Unlock' or not ElvUI_ExperienceBar:IsShown() then
+						ExpTooltip:SetBackdropBorderColor(unpack(E.media.bordercolor))
+						ExpTooltip.Title:SetText('< '..KF:Color('Experience')..' >')
+					end
+				end
+			end
+			
 			--<< Redefine ElvUI's script for Tooltip system >>--
 			function M:UpdateExperience(event)
 				local bar = self.expBar
@@ -265,12 +323,21 @@ if KF.UIParent then
 				local numFactions = GetNumFactions();
 				if not name then
 					bar:Hide()
+					if KF.db.Panel_Options.ExpRepLock == true and RepTooltip:IsShown() then
+						ToggleExpRepTooltip('SHOW')
+						ExpRepTooltipLock('Lock')
+					end
 				else
 					bar:Show()
 					local color = FACTION_BAR_COLORS[reaction]
 					bar.statusBar:SetStatusBarColor(color.r, color.g, color.b)	
 					bar.statusBar:SetMinMaxValues(min, max)
 					bar.statusBar:SetValue(value)
+					
+					if KF.db.Panel_Options.ExpRepLock == true and not RepTooltip:IsShown() then
+						ToggleExpRepTooltip('SHOW')
+						ExpRepTooltipLock('Lock')
+					end
 				end
 				if not RepTooltip then self:UpdateExpRepAnchors() return end
 				bar.text:SetText('')
@@ -317,82 +384,13 @@ if KF.UIParent then
 			
 			--<< Create sensor frame to display ExpRep Tooltip >>--
 			CreateFrame('Button', 'ExpRepSensor', KF.UIParent)
-			ExpRepSensor:RegisterForClicks('AnyUp')
-			
-			local function ToggleExpRepTooltip(ToggleType)
-				if ToggleType == 'SHOW' then
-					if ElvUI_ReputationBar:IsShown() then
-						RepTooltip:Show()
-						ReputationBarMover:ClearAllPoints()
-						ReputationBarMover:Point('TOPLEFT', RepTooltip, 'BOTTOMLEFT', 2, PANEL_HEIGHT - 2)
-						ReputationBarMover:Point('BOTTOMRIGHT', RepTooltip, -2, 2)
-						ElvUI_ReputationBar:SetFrameStrata('HIGH')
-						ElvUI_ReputationBar:SetFrameLevel(4)
-						ElvUI_ReputationBar:Size(ReputationBarMover:GetWidth(), ReputationBarMover:GetHeight())
-					end
-					if ElvUI_ExperienceBar:IsShown() and ExpTooltip then
-						ExpTooltip:Show()
-						if ElvUI_ReputationBar:IsShown() then
-							ExpTooltip:Point('BOTTOM', RepTooltip, 'TOP', 0, -1)
-						else
-							ExpTooltip:Point('BOTTOM', ExpRepSensor)
-						end
-						ExperienceBarMover:ClearAllPoints()
-						ExperienceBarMover:Point('TOPLEFT', ExpTooltip, 'BOTTOMLEFT', 2, PANEL_HEIGHT - 2)
-						ExperienceBarMover:Point('BOTTOMRIGHT', ExpTooltip, -2, 2)
-						ElvUI_ExperienceBar:SetFrameStrata('HIGH')
-						ElvUI_ExperienceBar:SetFrameLevel(4)
-						ElvUI_ExperienceBar:Size(ExperienceBarMover:GetWidth(), ExperienceBarMover:GetHeight())					
-					end
-				elseif ToggleType == 'HIDE' then					
-					if RepTooltip:IsShown() then
-						RepTooltip:Hide()
-						M:UpdateReputation()
-					end
-					if ExpTooltip and ExpTooltip:IsShown() then
-						ExpTooltip:Hide()
-						M:UpdateExperience()
-					end
-					M:UpdateExpRepAnchors()
-				end
-			end
-			
-			local function ExpRepTooltipLock(ToggleType)
-				if ToggleType == 'Lock' then
-					if RepTooltip:IsShown() then
-						RepTooltip:SetBackdropBorderColor(0.1, 0.36, 0.75)
-						RepTooltip.Title:SetText('< '..KF:Color('Reputation')..' > |cffceff00LOCKED!!|r')
-					end
-					if ExpTooltip and ExpTooltip:IsShown() then
-						ExpTooltip:SetBackdropBorderColor(0.1, 0.36, 0.75)
-						ExpTooltip.Title:SetText('< '..KF:Color('Experience')..' > |cffceff00LOCKED!!|r')
-					end
-					ElvUI_ReputationBar:SetScript('OnShow', function() ToggleExpRepTooltip('SHOW') end)
-					ElvUI_ReputationBar:SetScript('OnHide', function() ToggleExpRepTooltip('HIDE') end)
-				elseif ToggleType == 'Unlock' then
-					if RepTooltip:IsShown() then
-						RepTooltip:SetBackdropBorderColor(unpack(E.media.bordercolor))
-						RepTooltip.Title:SetText('< '..KF:Color('Reputation')..' >')
-					end
-					if ExpTooltip and ExpTooltip:IsShown() then
-						ExpTooltip:SetBackdropBorderColor(unpack(E.media.bordercolor))
-						ExpTooltip.Title:SetText('< '..KF:Color('Experience')..' >')
-					end
-					ElvUI_ReputationBar:SetScript('OnShow', nil)
-					ElvUI_ReputationBar:SetScript('OnHide', nil)
-				end
-			end
-			
-			ExpRepSensor:SetScript('OnEnter', function()
-				ToggleExpRepTooltip('SHOW')
-			end)
-			
+			ExpRepSensor:RegisterForClicks('AnyUp')			
+			ExpRepSensor:SetScript('OnEnter', function() ToggleExpRepTooltip('SHOW') end)
 			ExpRepSensor:SetScript('OnLeave', function()
 				if KF.db.Panel_Options.ExpRepLock == false then
 					ToggleExpRepTooltip('HIDE')
 				end
 			end)
-			
 			ExpRepSensor:SetScript('OnClick', function(_, button)
 				if button == 'RightButton' then
 					if KF.db.Panel_Options.ExpRepLock == true then
@@ -621,17 +619,22 @@ if KF.UIParent then
 				TopPanel.LocationY.text:SetText(y == 0 and '...' or KF:Color(y))
 			end,
 		}
-		KF:RegisterEventList('PLAYER_ENTERING_WORLD', KF.UpdateFrame.UpdateList.UpdateLocation.Action)
+		KF:RegisterEventList('PLAYER_ENTERING_WORLD', function()
+			if not (KF.db.Extra_Functions.TargetAuraTracker ~= false and UnitExists('target'))then
+				KF.UpdateFrame.UpdateList.UpdateLocation.Action()
+			end
+		end)
+		
+		KF:RegisterEventList('WORLD_MAP_UPDATE', function()
+			if not (KF.db.Extra_Functions.TargetAuraTracker ~= false and UnitExists('target'))then
+				KF.UpdateFrame.UpdateList.UpdateLocation.Action()
+			end
+		end)
 		
 		--	TP.LeftHolder = CreateFrame('Frame', nil, TP)
 		--	TP.LeftHolder:SetTemplate('Default', true)
 		--	TP.LeftHolder:Size(357, 20)
 		--	TP.LeftHolder:Point('LEFT', TP, 4, -10)
-		
-		function KF:Test()
-			print(TopPanel.LocationName.text:GetText())
-			print(TopPanel.LocationName.text:GetText() == nil or select(1, GetUnitSpeed('player')) > 0)
-		end
 	end
 	
 	

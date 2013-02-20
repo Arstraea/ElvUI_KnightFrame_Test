@@ -6,7 +6,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 	-----------------------------------------------------------
 	-- [ Knight : BuffTracker								]--
 	-----------------------------------------------------------
-	local SynergyBuffs, Check, CheckingSpellName, SpellTexture, CheckFilterForActiveBuff
+	local SynergyBuffs, Check, CheckingSpellName, SpellTexture, CheckAura
 	if KF.db.Extra_Functions.BuffTracker ~= false or KF.db.Extra_Functions.TargetAuraTracker ~= false then
 		SynergyBuffs = {
 			[1] = { -- Attack Power 전투력 증가
@@ -177,7 +177,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 			},
 		}
 		
-		CheckFilterForActiveBuff = function(filter, unit, CheckType)
+		CheckAura = function(filter, unit, CheckType)
 			for Tag, Check in pairs(filter) do
 				CheckingSpellName, _, SpellTexture, _, _, _, _, _, _ = GetSpellInfo(type(Check) == 'table' and Check['ID'] or Check)
 				if UnitAura(unit, CheckingSpellName, nil, CheckType) then
@@ -194,7 +194,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 		local userClass = { [1] = nil, [2] = nil, [3] = nil, [4] = nil, [5] = nil, [6] = nil, [7] = nil, [8] = nil, [9] = nil, }
 		local function BuffTracker_UpdateReminder()
 			for i = 1, 9 do
-				Check, spellName[i], userClass[i] = CheckFilterForActiveBuff(SynergyBuffs[i], 'player')
+				Check, spellName[i], userClass[i] = CheckAura(SynergyBuffs[i], 'player')
 				BuffTracker['Spell'..i].t:SetTexture(SpellTexture)
 				if Check then
 					BuffTracker['Spell'..i].t:SetAlpha(1)
@@ -209,7 +209,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 		KF:RegisterEventList('CHARACTER_POINTS_CHANGED', BuffTracker_UpdateReminder)
 		KF:RegisterEventList('PLAYER_ENTERING_WORLD', BuffTracker_UpdateReminder)
 		KF:RegisterEventList('UNIT_AURA', function(_, unit)
-			if unit ~= 'player' or not (limiter + 0.3 < GetTime()) then return end
+			if unit ~= 'player' or not (limiter + 0.5 < GetTime()) then return end
 			limiter = GetTime()
 			BuffTracker_UpdateReminder()
 		end)
@@ -252,7 +252,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 		BuffTracker['Spell3']:Point('TOPRIGHT', BuffTracker['Spell4'], 'TOPLEFT', -4, 0)
 		BuffTracker['Spell3'].Tag = L['SP']
 		BuffTracker['Spell4']:Point('TOPRIGHT', BuffTracker['Spell5'], 'TOPLEFT', -19, 0)
-		BuffTracker['Spell4'].Tag = L['SpellHaste']
+		BuffTracker['Spell4'].Tag = ITEM_MOD_HASTE_SPELL_RATING_SHORT
 
 		BuffTracker['Spell5']:Point('TOP', BuffTracker, 'BOTTOM', 0, 16)
 		BuffTracker['Spell5'].Tag = select(1, GetSpellInfo(53563))
@@ -492,9 +492,9 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 		local function TargetAuraTracker_UpdateReminder()
 			for i = 1, 8 do
 				if CurrentTarget == 'Ally' or CurrentTarget == 'NPC' then
-					Check, spellName[i], userClass[i] = CheckFilterForActiveBuff(SynergyBuffs[i + 5], 'target', (i == 7 or i == 8) and 'HARMFUL')
+					Check, spellName[i], userClass[i] = CheckAura(SynergyBuffs[i + 5], 'target', (i == 7 or i == 8) and 'HARMFUL')
 				elseif CurrentTarget == 'Enemy' or CurrentTarget == 'Monster' then
-					Check, spellName[i], userClass[i] = CheckFilterForActiveBuff(SynergyDebuffs[i], 'target', not (i == 7 or i == 8) and 'HARMFUL')
+					Check, spellName[i], userClass[i] = CheckAura(SynergyDebuffs[i], 'target', not (i == 7 or i == 8) and 'HARMFUL')
 				end
 				
 				TargetAuraTracker['Spell'..i].t:SetTexture(SpellTexture)
@@ -569,7 +569,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 			end
 		end
 		KF:RegisterEventList('UNIT_AURA', function(_, unit)
-			if not unit == 'target' or CurrentTarget == 'NONE' or not (limiter + 0.3 < GetTime()) then
+			if not unit == 'target' or CurrentTarget == 'NONE' or not (limiter + 0.5 < GetTime()) then
 				return
 			elseif (UnitCanAttack('player', 'target') and (CurrentTarget == 'NPC' or CurrentTarget == 'Ally')) or (not UnitCanAttack('player', 'target') and (CurrentTarget == 'Monster' or CurrentTarget == 'Enemy')) then
 				CheckTargetType()
@@ -678,7 +678,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 		end
 
 		-- Setting Icon Location : [7]   [5][1][2][3][4][6]   [8]
-		TargetAuraTracker['Spell7']:Point('TOPRIGHT', TargetAuraTracker['Spell5'], 'TOPLEFT', -19, 0)
+		TargetAuraTracker['Spell7']:Point('TOPRIGHT', TargetAuraTracker['Spell5'], 'TOPLEFT', -47, 0)
 		TargetAuraTracker['Spell7']['Ally'] = L['Bloodlust Debuff']
 		TargetAuraTracker['Spell7']['Enemy'] = L['Dangerous Utility']
 		
@@ -701,7 +701,7 @@ if KF.UIParent and KF.db.Panel_Options.TopPanel ~= false then
 		TargetAuraTracker['Spell6']['Ally'] = L['Foods']
 		TargetAuraTracker['Spell6']['Enemy'] = L['Heal-Reducing']
 		
-		TargetAuraTracker['Spell8']:Point('TOPLEFT', TargetAuraTracker['Spell6'], 'TOPRIGHT', 19, 0)
+		TargetAuraTracker['Spell8']:Point('TOPLEFT', TargetAuraTracker['Spell6'], 'TOPRIGHT', 47, 0)
 		TargetAuraTracker['Spell8']['Ally'] = L['Resurrection Debuff']
 		TargetAuraTracker['Spell8']['Enemy'] = L['Turtle Utility']
 

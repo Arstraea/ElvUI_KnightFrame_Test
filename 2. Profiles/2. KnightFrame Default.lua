@@ -95,17 +95,40 @@ if KF.UIParent then
 			['Inspect'] = {
 				['Enable'] = true,
 				['ShowMessage'] = true,
-				['TransparentBackground'] = false,
 				['DisplayPage'] = 'Model',
 				['Location'] = 'BOTTOMLEFTElvUIParentLEFT40-40',
 			},
+			
 			['ItemLevel'] = true,
 			['ShowChatTab'] = true,
 			['RealValue'] = true,
 			['TooltipTalent'] = true,
 			['ToggleAuraTimer'] = true,
+			['ToggleWatchFrame'] = true,
+			
 			['BuffTracker'] = true,
 			['TargetAuraTracker'] = true,
+			['SpellAlert'] = {
+				['Enable'] = true,
+				[87024] = { -- 소작
+					['Type'] = 'HARMFUL',
+					['Message'] = '소작!!! 두번죽이지 말아줘요 ;ㅁ;',
+				},
+				[41425] = { -- 저체온증
+					['Type'] = 'HARMFUL',
+					['Message'] = '얼방 사용했슴!! 살려주세요.. ㅠㅁㅠ',
+				},
+				[94794] = { -- 니트로 부작용
+					['Type'] = 'HARMFUL',
+					['Message'] = '니트로 삑사리났음!! 힐힐힐!! ㅠㅠ 아이고, 나죽네!!',
+				},
+				[19263] = { -- 공저
+					['Message'] = '공격저지 켰어요~',
+				},
+				[1022] = { --보축
+					['Message'] = '보축',
+				},
+			},
 		},
 	}
 end

@@ -15,6 +15,31 @@ local function Calculater(msg)
 	seterrorhandler(origHandler)
 end
 
+
+function PrintTable(TableToCheck, row, InputTableName)
+	row = row or 0
+	if InputTableName then
+		print(((' '):rep(row*2))..'|cff2eb7e4 [ Table|r : '..InputTableName..'|cff2eb7e4 ]')
+		InputTableName = InputTableName..'-'
+	else
+		InputTableName = ''
+	end
+	for k, v in pairs(TableToCheck) do
+		if type(v) == 'table' then
+			PrintTable(v, row + 1, InputTableName..k)
+		elseif type(v) == 'function' then
+			print(((' '):rep(row*2))..' |cff828282'..(row == 0 and '■' or ' - ')..'|r|cffceff00'..k..'|r : FUNCTION')
+		elseif type(v) == 'userdata' then
+			print(((' '):rep(row*2))..' |cff828282'..(row == 0 and '■' or ' - ')..'|r|cffceff00'..k..'|r : UserData')
+		elseif v == nil then
+			print(((' '):rep(row*2))..' |cff828282'..(row == 0 and '■' or ' - ')..'|r|cffceff00'..k..'|r : nil value')
+		else
+			print(((' '):rep(row*2))..' |cff828282'..(row == 0 and '■' or ' - ')..'|r|cffceff00'..k..'|r : '..(type(v) == 'boolean' and (v==true and '|cff1784d1TRUE|r' or '|cffff0000FALSE|r') or v))
+		end
+	end
+end
+
+
 KF:RegisterChatCommand('test', 'Test')
 KF:RegisterChatCommand('ㅅㄷㄴㅅ', 'Test')
 

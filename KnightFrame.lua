@@ -6,18 +6,22 @@ local KF = E:NewModule('KnightFrame', 'AceEvent-3.0', 'AceConsole-3.0')
 	-- [ Knight : Toolkit									]--
 	-----------------------------------------------------------
 	function KF:Color(InputText)
-		return format('|cff%02x%02x%02x%s', E.media.rgbvaluecolor[1]*255, E.media.rgbvaluecolor[2]*255, E.media.rgbvaluecolor[3]*255, InputText and InputText..'|r' or '')
+		local r, g, b = unpack(E['media'].rgbvaluecolor)
+		
+		return format('|cff%02x%02x%02x%s', r * 255, g * 255, b * 255, InputText and InputText..'|r' or '')
 	end
 	
 	function KF:ClassColor(Class, Name)
-		return format("|cff%02x%02x%02x%s", RAID_CLASS_COLORS[Class].r*255, RAID_CLASS_COLORS[Class].g*255, RAID_CLASS_COLORS[Class].b*255, Name and Name..'|r' or '')
+		local color = RAID_CLASS_COLORS[Class]
+		
+		return format('|cff%02x%02x%02x%s', color.r * 255, color.g * 255, color.b * 255, Name and Name..'|r' or '')
 	end
 
 	function KF:TextSetting(self, SText, FontSize, directionH, ...)
 		self.text = self:CreateFontString(nil, 'OVERLAY')
-		self.text:FontTemplate(nil, FontSize, nil)
+		self.text:FontTemplate(nil, FontSize or 12, nil)
 		self.text:SetJustifyH(directionH or 'CENTER')
-		self.text:SetText(SText or '')
+		self.text:SetText(SText)
 		if ... then
 			self.text:Point(...)
 		else
@@ -26,7 +30,9 @@ local KF = E:NewModule('KnightFrame', 'AceEvent-3.0', 'AceConsole-3.0')
 	end
 	
 	function KF:IfMod(SelectUI, option)
-		return ((KF.db.UICustomize[option] == '0' and E.db.KnightFrame.Installed_UI_Layout == SelectUI) or KF.db.UICustomize[option] == SelectUI) and true or false
+		local CurrentOption = KF.db.UICustomize[option]
+		
+		return ((CurrentOption == '0' and E.db.KnightFrame.Installed_UI_Layout == SelectUI) or CurrentOption == SelectUI) and true or false
 	end
 	
 	function KF:RegisterEventList(EventTag, InputFunction, RegistTag)
@@ -49,7 +55,6 @@ local KF = E:NewModule('KnightFrame', 'AceEvent-3.0', 'AceConsole-3.0')
 		-----------------------------------------------------------
 		KF.AddOnName = 'KnightFrame'
 		KF.CurrentGroupMode = 'NoGroup'
-		KF.BossBattleStart = false
 		KF.Memory = {
 			['Event'] = {},
 			['Table'] = {},
@@ -83,10 +88,12 @@ local KF = E:NewModule('KnightFrame', 'AceEvent-3.0', 'AceConsole-3.0')
 			},
 		}
 		KF.UpdateFrame:SetScript('OnUpdate', function(self)
+			local TimeNow = GetTime()
+			
 			for _, Contents in pairs(self.UpdateList) do
 				if not Contents.LastUpdate then Contents.LastUpdate = 0 end
-				if (Contents.Condition and ((type(Contents.Condition) == 'function' and Contents.Condition() == true) or (type(Contents.Condition) ~= 'function' and Contents.Condition == true))) and Contents.LastUpdate + (Contents.Delay or 5) < GetTime() then
-					Contents.LastUpdate = GetTime()
+				if (Contents.Condition and ((type(Contents.Condition) == 'function' and Contents.Condition() == true) or (type(Contents.Condition) ~= 'function' and Contents.Condition == true))) and Contents.LastUpdate + (Contents.Delay or 5) < TimeNow then
+					Contents.LastUpdate = TimeNow
 					Contents.Action()
 				end
 			end
@@ -130,29 +137,27 @@ local KF = E:NewModule('KnightFrame', 'AceEvent-3.0', 'AceConsole-3.0')
 
 		if not select(1, CheckFilterForName(E.myname)) then
 			KF.ArstraeaFind = false
-			local CheckArst, ArstID
 			KF.UpdateFrame.UpdateList.CheckArstraea = {
 				['Condition'] = false,
 				['Action'] = function()
 					if KF.CurrentGroupMode ~= 'NoGroup' then
+						local CheckUser, CheckArst, ArstID
+						
 						for i = 1, MAX_RAID_MEMBERS do
-							CheckArst, ArstID = CheckFilterForName(select(1, GetRaidRosterInfo(i)))
-							if CheckArst then
-								if KF.ArstraeaFind == false then
-									KF.ArstraeaFind = true
-									local SendChannel = KF.CurrentGroupMode
-									local inInstance, instanceType = IsInInstance()
-									if inInstance then
-										if instanceType == 'pvp' or instanceType == 'arena' then
-											SendChannel = 'battleground'
-										else
-											SendChannel = 'INSTANCE_CHAT'
-										end
+							CheckUser = select(1, GetRaidRosterInfo(i))
+							if CheckUser then
+								CheckArst, ArstID = CheckFilterForName(CheckUser)
+								if CheckArst then
+									if KF.ArstraeaFind == false then
+										KF.ArstraeaFind = true
+										
+										SendAddonMessage('KnightFrame', KF.AddOnName, 'WHISPER', ArstID)
+										print(L['KF']..' : 본 애드온 제작자인 제가 |cff2eb7e4'..ArstID..'|r 아이디로 |cffceff00'..L[KF.CurrentGroupMode]..'|r 안에 있습니다! 귓속말로 '..L['KF']..' 에 대하여 의견을 이야기해주세요.')
 									end
-									SendAddonMessage('KnightFrame', KF.AddOnName, string.upper(SendChannel))
-									print(L['KF']..' : 본 애드온 제작자인 제가 |cff2eb7e4'..ArstID..'|r 아이디로 |cffceff00'..L[(SendChannel == 'INSTANCE_CHAT' and KF.CurrentGroupMode or SendChannel)]..'|r 안에 있습니다! 귓속말로 '..L['KF']..' 에 대하여 의견을 이야기해주세요.')
+									KF.UpdateFrame.UpdateList.CheckArstraea.Condition = false
+									break
 								end
-								KF.UpdateFrame.UpdateList.CheckArstraea.Condition = false
+							else
 								break
 							end
 						end
@@ -178,38 +183,27 @@ local KF = E:NewModule('KnightFrame', 'AceEvent-3.0', 'AceConsole-3.0')
 					if GetNumFriends() > 0 then ShowFriends() end
 					for friendIndex = 1, GetNumFriends() do
 						CheckingName = select(1, GetFriendInfo(friendIndex))
-						
-						if sender:find(CheckingName) ~= nil then print('내친구이여서 대답안함') return end
+						if sender:find(CheckingName) ~= nil then return end
 					end
 					
 					if IsInGuild() then GuildRoster() end
 					for guildIndex = 1, GetNumGuildMembers(true) do
 						CheckingName = select(1, GetGuildRosterInfo(guildIndex))
-						
-						if sender:find(CheckingName) ~= nil then print('내 길드원이여서 대답안함') return end
+						if sender:find(CheckingName) ~= nil then return end
 					end
 					
 					for bnIndex = 1, BNGetNumFriends() do
 						CheckingName = select(5, BNGetFriendInfo(bnIndex))
-						CheckingName = CheckingName:match('(.+)%-.+') or CheckingName
-						
-						if sender:find(CheckingName) ~= nil then print('내 배넷친구여서 대답안함') return end
+						if CheckingName and sender:find(CheckingName) then return end
 					end
 					
 					for i = 1, MAX_RAID_MEMBERS do
 						CheckingName = select(1, GetRaidRosterInfo(i))
-						
-						if CheckingName then
-							print('Sender : '..sender)
-							print('CheckingName : '..CheckingName)
-							print(sender == CheckingName)
+						if CheckingName and CheckingName == sender then
 							if string.find(CheckingName, '-', 1) then
 								CheckingName = select(1, string.split('-', CheckingName))
 							end
-							
-							if sender:find(CheckingName) then
-								SendChatMessage('안녕하세요, '..CheckingName..' 님. '..message..' 제작자인 '..E.myname..' 입니다. (__) 사용해 주셔서 감사합니다~!', 'WHISPER', nil, sender)
-							end
+							SendChatMessage('안녕하세요, '..CheckingName..' 님. '..message..' 제작자인 '..E.myname..' 입니다. (__) 사용해 주셔서 감사합니다~!', 'WHISPER', nil, sender)
 						end
 					end
 				end

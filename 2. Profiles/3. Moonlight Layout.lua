@@ -14,7 +14,7 @@ if KF.UIParent and E.db.KnightFrame.Installed_UI_Layout == 'ArstraeaMod' then
 			},
 			['MeterAddonPanel'] = {
 				['Enable'] = true,
-				['Width'] = 442,
+				['Width'] = 443,
 				['Height'] = 180,
 				['Location'] = 'BOTTOMRIGHTRightChatPanelBOTTOMLEFT-50',
 			},
@@ -239,9 +239,11 @@ if KF.UIParent and E.db.KnightFrame.Installed_UI_Layout == 'ArstraeaMod' then
 	P['actionbar']["macrotext"] = true
 
 	P['actionbar']['bar1']['point'] = 'TOPLEFT'
+	P['actionbar']['bar1']['heightMult'] = 2
 	P['actionbar']['bar1']['buttonsize'] = 27
 
 	P['actionbar']['bar2']['enabled'] = true
+	P['actionbar']['bar2']['buttonsPerRow'] = 6
 	P['actionbar']['bar2']['point'] = 'TOPLEFT'
 	P['actionbar']['bar2']['buttonsize'] = 27
 	P['actionbar']['bar2']['backdrop'] = true
@@ -266,155 +268,4 @@ if KF.UIParent and E.db.KnightFrame.Installed_UI_Layout == 'ArstraeaMod' then
 	P['actionbar']['stanceBar']['buttonsize'] = 16
 	P['actionbar']['stanceBar']['buttonspacing'] = 3
 	P['actionbar']['stanceBar']['backdrop'] = true
-
-	if E.db.KnightFrame.Installed_UI_Layout == 'ArstraeaMod' then
-		P['actionbar']['bar1']['heightMult'] = 2
-		P['actionbar']['bar2']['buttonsPerRow'] = 6
-	elseif E.db.KnightFrame.Installed_UI_Layout == 'KimsungjaeMod' then
-		P['actionbar']['bar1']['backdrop'] = false	
-		P['actionbar']['bar2']['buttonsPerRow'] = 3
-		P['actionbar']['bar4']['backdrop'] = false
-		P['actionbar']['bar4']['buttonsPerRow'] = 12
-		P['actionbar']['bar5']['buttonsPerRow'] = 3
-	end
-end
-
---knight Action Bar Default Position
-KF.ABP = {
-	['ArstraeaMod'] = {
-		['ElvAB_1'] = 'BOTTOMUIParentBOTTOM0188',
-		['ElvAB_2'] = 'BOTTOMUIParentBOTTOM-288188',
-		['ElvAB_3'] = 'BOTTOMUIParentBOTTOM0188',
-		['ElvAB_4'] = 'RIGHTUIParentRIGHT-40',
-		['ElvAB_5'] = 'BOTTOMUIParentBOTTOM288188',
-		
-		['ShiftAB'] = 'BOTTOMLEFTUIParentBOTTOM-383256',
-		['PetAB'] = 'BOTTOMElvUIParentBOTTOM0256',
-	},
-	['KimsungjaeMod'] = {
-		['ElvAB_1'] = 'BOTTOMUIParentBOTTOM092',
-		['ElvAB_2'] = 'BOTTOMUIParentBOTTOM-23730',
-		['ElvAB_3'] = 'BOTTOMUIParentBOTTOM061',
-		['ElvAB_4'] = 'BOTTOMUIParentBOTTOM030',
-		['ElvAB_5'] = 'BOTTOMUIParentBOTTOM23730',
-		
-		['ShiftAB'] = 'BOTTOMLEFTUIParentBOTTOM-383256',
-		['PetAB'] = 'BOTTOMElvUIParentBOTTOM0256',
-	},
-	['ArstraeaMod_NoPanel'] = {
-		['ElvAB_1'] = 'BOTTOMUIParentBOTTOM04',
-		['ElvAB_2'] = 'BOTTOMUIParentBOTTOM-2894',
-		['ElvAB_3'] = 'BOTTOMUIParentBOTTOM04',
-		['ElvAB_4'] = 'RIGHTUIParentRIGHT-40',
-		['ElvAB_5'] = 'BOTTOMUIParentBOTTOM2894',
-		
-		['ShiftAB'] = 'BOTTOMLEFTUIParentBOTTOM-383256',
-		['PetAB'] = 'BOTTOMElvUIParentBOTTOM0256',
-	},
-}
-
-function KF:ActionBarSetting(force)
-	local SelectUI, p1, p2, p3, p4, p5
-	if force == 'KimsungjaeMod' or KF:IfMod('KimsungjaeMod', 'Panel') then
-		if force then
-			E.db['actionbar']['bar1']['buttons'] = 12
-			E.db['actionbar']['bar1']['buttonsPerRow'] = 12
-			E.db['actionbar']['bar1']['backdrop'] = false
-			E.db['actionbar']['bar1']['heightMult'] = 1
-			E.db['actionbar']['bar1']['widthMult'] = 1
-			E.db['actionbar']['bar1']['buttonsize'] = 27
-			E.db['actionbar']['bar1']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar2']['buttons'] = 12
-			E.db['actionbar']['bar2']['buttonsPerRow'] = 3
-			E.db['actionbar']['bar2']['backdrop'] = true
-			E.db['actionbar']['bar2']['heightMult'] = 1
-			E.db['actionbar']['bar2']['widthMult'] = 1
-			E.db['actionbar']['bar2']['buttonsize'] = 27
-			E.db['actionbar']['bar2']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar3']['buttons'] = 12
-			E.db['actionbar']['bar3']['buttonsPerRow'] = 12
-			E.db['actionbar']['bar3']['backdrop'] = false
-			E.db['actionbar']['bar3']['heightMult'] = 1
-			E.db['actionbar']['bar3']['widthMult'] = 1
-			E.db['actionbar']['bar3']['buttonsize'] = 27
-			E.db['actionbar']['bar3']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar4']['buttons'] = 12
-			E.db['actionbar']['bar4']['buttonsPerRow'] = 12
-			E.db['actionbar']['bar4']['backdrop'] = false
-			E.db['actionbar']['bar4']['heightMult'] = 1
-			E.db['actionbar']['bar4']['widthMult'] = 1
-			E.db['actionbar']['bar4']['buttonsize'] = 27
-			E.db['actionbar']['bar4']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar5']['buttons'] = 12
-			E.db['actionbar']['bar5']['buttonsPerRow'] = 3
-			E.db['actionbar']['bar5']['backdrop'] = true
-			E.db['actionbar']['bar5']['heightMult'] = 1
-			E.db['actionbar']['bar5']['widthMult'] = 1
-			E.db['actionbar']['bar5']['buttonsize'] = 27
-			E.db['actionbar']['bar5']['buttonspacing'] = 4
-			
-			E:GetModule('ActionBars'):UpdateButtonSettings()
-		end
-		SelectUI = 'KimsungjaeMod'
-	elseif force == 'ArstraeaMod' or KF:IfMod('ArstraeaMod', 'Panel') then
-		if force then
-			E.db['actionbar']['bar1']['buttons'] = 12
-			E.db['actionbar']['bar1']['buttonsPerRow'] = 12
-			E.db['actionbar']['bar1']['backdrop'] = true
-			E.db['actionbar']['bar1']['heightMult'] = 2
-			E.db['actionbar']['bar1']['widthMult'] = 1
-			E.db['actionbar']['bar1']['buttonsize'] = 27
-			E.db['actionbar']['bar1']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar2']['buttons'] = 12
-			E.db['actionbar']['bar2']['buttonsPerRow'] = 6
-			E.db['actionbar']['bar2']['backdrop'] = true
-			E.db['actionbar']['bar2']['heightMult'] = 1
-			E.db['actionbar']['bar2']['widthMult'] = 1
-			E.db['actionbar']['bar2']['buttonsize'] = 27
-			E.db['actionbar']['bar2']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar3']['buttons'] = 12
-			E.db['actionbar']['bar3']['buttonsPerRow'] = 12
-			E.db['actionbar']['bar3']['backdrop'] = false
-			E.db['actionbar']['bar3']['heightMult'] = 1
-			E.db['actionbar']['bar3']['widthMult'] = 1
-			E.db['actionbar']['bar3']['buttonsize'] = 27
-			E.db['actionbar']['bar3']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar4']['buttons'] = 12
-			E.db['actionbar']['bar4']['buttonsPerRow'] = 1
-			E.db['actionbar']['bar4']['backdrop'] = true
-			E.db['actionbar']['bar4']['heightMult'] = 1
-			E.db['actionbar']['bar4']['widthMult'] = 1
-			E.db['actionbar']['bar4']['buttonsize'] = 27
-			E.db['actionbar']['bar4']['buttonspacing'] = 4
-			
-			E.db['actionbar']['bar5']['buttons'] = 12
-			E.db['actionbar']['bar5']['buttonsPerRow'] = 6
-			E.db['actionbar']['bar5']['backdrop'] = true
-			E.db['actionbar']['bar5']['heightMult'] = 1
-			E.db['actionbar']['bar5']['widthMult'] = 1
-			E.db['actionbar']['bar5']['buttonsize'] = 27
-			E.db['actionbar']['bar5']['buttonspacing'] = 4
-			
-			E:GetModule('ActionBars'):UpdateButtonSettings()
-		end
-		if E.db.KnightFrame.Panel_Option.Newpanel == false then SelectUI = 'ArstraeaMod_NoPanel' else SelectUI = 'ArstraeaMod' end
-	end
-	for i = 1, 7 do
-		local f
-		if i < 6 then f = 'ElvAB_'..i elseif i == 6 then f = 'ShiftAB' elseif i == 7 then f = 'PetAB' end
-		if force then E.db.movers[f] = nil end
-		if E:HasMoverBeenMoved(f) == false and KF.ABP[SelectUI][f] then
-			p1, p2, p3, p4, p5 = string.split('\031', KF.ABP[SelectUI][f])
-			_G[f]:ClearAllPoints()
-			_G[f]:Point(p1, p2, p3, p4, p5)
-			E:SaveMoverPosition(f)
-		end
-	end
 end

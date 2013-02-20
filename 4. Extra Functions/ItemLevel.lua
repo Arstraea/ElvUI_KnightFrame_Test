@@ -78,7 +78,7 @@ if KF.UIParent and KF.db.Extra_Functions.ItemLevel ~= false then
 					end
 				end
 			end
-			_G['KF_ItemLevel_'..TargetFrame].text:SetText(string.format('|cffceff00'..L['Average']..'|r : %.2f', Total/ItemCount))
+			_G['KF_ItemLevel_'..TargetFrame].text:SetText(string.format('|cffceff00'..L['Average']..'|r : %.2f', (ItemCount > 0 and Total/ItemCount or 0)))
 		end
 	end
 	KF:RegisterEventList('UNIT_INVENTORY_CHANGED', function() ItemLevelCalc('Player') end)

@@ -172,25 +172,34 @@ if KF.UIParent then
 		if InCombatLockdown() then return end
 		
 		KF.Role = nil
-		if GetSpecialization() and select(2, GetSpecializationInfo(GetSpecialization())) then
-			KF.Role = KF.Memory['Table']['ClassRole'][E.myclass][select(2, GetSpecializationInfo(GetSpecialization()))]['Rule']
+		
+		local talentTree = GetSpecialization()
+		
+		if talentTree then
+			talentTree = select(2, GetSpecializationInfo(talentTree))
+			if talentTree then
+				KF.Role = KF.Memory['Table']['ClassRole'][E.myclass][talentTree]['Rule']
+			end
 		end
 		
-		KF.Resilience = false
-		if GetCombatRatingBonus(COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN) > GetDodgeChance() and GetCombatRatingBonus(COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN) > GetParryChance() then
-			KF.Resilience = true
+		local Resilience = GetCombatRatingBonus(COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN)
+		if Resilience > GetDodgeChance() and Resilence > GetParryChance() then
+			Resilience = true
+		else
+			Resilience = nil
 		end
 		
-		if KF.Role == 'Tank' and KF.Resilience == true then
-			KF.Role = 'Melee'
-		end
+		if KF.Role == 'Tank' and Resilience == true then KF.Role = 'Melee' end
 		
 		if KF.Role and KF.db.DatatextSetting.Enable ~= false and KF_TalentDatatext then
 			KF_TalentDatatext.text:Point('CENTER', KF_TalentDatatext, -15, 0)
 			KF_TalentDatatext.text:SetText(KF.Role == 'Tank' and '|TInterface\\AddOns\\ElvUI\\media\\textures\\tank.tga:14:14:0:1|t' or KF.Role == 'Healer' and '|TInterface\\AddOns\\ElvUI\\media\\textures\\healer.tga:14:14:0:0|t' or '|TInterface\\AddOns\\ElvUI\\media\\textures\\dps.tga:14:14:0:-1|t')
 		elseif not KF.Role then
-			-- plyaerap > playerint or playeragi > playerint
-			if (select(1, UnitAttackPower('player')) + select(2, UnitAttackPower('player')) + select(3, UnitAttackPower('player')) > select(2, UnitStat('player', 4))) or (select(2, UnitStat('player', 2)) > select(2, UnitStat('player', 4))) then
+			local playerint = select(2, UnitStat('player', 4))
+			local playeragi	= select(2, UnitStat('player', 2))
+			local base, posBuff, negBuff = UnitAttackPower('player')
+			
+			if (base + posBuff + negBuff > playerint) or (playeragi > playerint) then
 				KF.Role = 'Melee'
 			else
 				KF.Role = 'Caster'
@@ -246,9 +255,12 @@ if KF.UIParent then
 	-----------------------------------------------------------
 	-- [ Knight : Check Combat End							]--
 	-----------------------------------------------------------
-	local IsCombatEnd
+	KF.BossBattleStart = CreateFrame('Frame', nil, E.UIParent)
+	KF.BossBattleStart:Hide()
+	
 	local function CheckCombatEnd()
-		IsCombatEnd = true
+		local IsCombatEnd = true
+		
 		if KF.CurrentGroupMode == 'NoGroup' then
 			if UnitAffectingCombat('player') then IsCombatEnd = false end
 		else
@@ -273,17 +285,16 @@ if KF.UIParent then
 	
 	local BossIsExists = false
 	KF.UpdateFrame.UpdateList.CheckCombatEnd = {
-		['Condition'] = false,
-		['Delay'] = 0.1,
+		['Condition'] = true,
+		['Delay'] = 0.5,
 		['Action'] = function()
-			if KF.BossBattleStart == false then
+			if not KF.BossBattleStart:IsShown() then
 				if UnitExists('boss1') or UnitExists('boss2') or UnitExists('boss3') or UnitExists('boss4') then
 					for i = 1, 4 do
 						if UnitExists('boss'..i) then
-							if (UnitLevel('boss'..i) == -1 or UnitClassification('boss'..i) == 'worldboss') and UnitCanAttack('player', 'boss'..i) then
-								BossIsExists = true
-								KF.BossBattleStart = true
-							end
+							BossIsExists = true
+							KF.BossBattleStart:Show()
+							break
 						end
 					end
 				end
@@ -297,7 +308,7 @@ if KF.UIParent then
 			
 			if CheckCombatEnd() == true and BossIsExists == false then
 				KF.UpdateFrame.UpdateList.CheckCombatEnd.Condition = false
-				KF.BossBattleStart = false
+				KF.BossBattleStart:Hide()
 				return
 			end
 		end,

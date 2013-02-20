@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 50100
 ## Title: |cff1784d1ElvUI |r|cffffffffKnight Frame|r |cffffdc3cv2.0
 ## Author: Arstraea
 ## Version: 2.0
@@ -7,7 +7,7 @@
 ## RequiredDeps: ElvUI
 ## OptionalDeps: ACP, Skada, Recount, Omen, BlueItemInfo3, DBM-Core, Findparty, InvenCraftInfo2
 ## DefaultState: Enabled
-## Notes: Custom User Interface of Elv UI 4.xx version by Arstraea
+## Notes: Custom User Interface of Elv UI 5.xx version by Arstraea
 
 KnightFrame.lua
 3. Locales\Loader.xml

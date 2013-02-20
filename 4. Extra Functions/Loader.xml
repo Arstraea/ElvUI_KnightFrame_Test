@@ -6,6 +6,6 @@
 	<Script file="ToggleAuraTimer.lua"/>
 	<Script file="AuraTracker.lua"/>	
 	<Script file="SpellAlert.lua"/>
-	<Script file="ToggleQuest.lua"/>
+	<Script file="ToggleWatchFrame.lua"/>
 	<Include file="RaidCooldown\Loader.xml"/>
 </Ui>

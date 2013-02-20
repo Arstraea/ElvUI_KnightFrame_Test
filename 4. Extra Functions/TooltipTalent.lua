@@ -20,7 +20,12 @@ if KF.UIParent and KF.db.Extra_Functions.TooltipTalent ~= false then
 		
 		local userClass, talentSpec, talentRule
 		if UnitIsUnit(unit, 'player') then
-			talentSpec = GetSpecialization() and select(2, GetSpecializationInfo(GetSpecialization())) or nil
+			talentSpec = GetSpecialization()
+			if talentSpec then
+				talentSpec = select(2, GetSpecializationInfo(talentSpec))
+			else
+				talentSpec = nil
+			end
 			userClass = E.myclass
 		else
 			userClass = select(2, UnitClass(unit))

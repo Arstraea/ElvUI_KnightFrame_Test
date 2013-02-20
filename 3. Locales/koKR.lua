@@ -1,5 +1,11 @@
 ﻿--local E, L, V, P, G, _  = unpack(ElvUI)
-local E, L, _, _, _, _  = unpack(ElvUI)
+local E, L, _, _, _, _ = unpack(ElvUI)
+
+local AceLocale = LibStub:GetLibrary('AceLocale-3.0')
+local L = AceLocale:NewLocale('ElvUI', 'koKR', true)
+
+if not L then return end
+
 local KF = E:GetModule('KnightFrame')
 
 --[[ ColorTable
@@ -14,7 +20,7 @@ local KF = E:GetModule('KnightFrame')
 
 do	--General
 	L['KF'] = KF:Color('Knight Frame')
-	BINDING_HEADER_KnightFrame = L['KF']
+	BINDING_HEADER_KnightFrame = KF:Color('Knight Frame')
 	BINDING_NAME_InspectMouseover = '|cffffffff - |cffffffff마우스오버 살펴보기'
 	
 	L['raid'] = '레이드 파티'
@@ -52,19 +58,19 @@ do	--Print Message
 	L['Lock ExpRep Tooltip.'] = '|cff2eb7e4경험치&평판|r 상세 정보패널을 |cffceff00고정|r합니다.'
 	L['Unlock ExpRep Tooltip.'] = '|cff2eb7e4경험치&평판|r 상세 정보패널의 고정을 |cffff5353해제|r합니다.'
 	
-	L['Cannot Inspect because target unit is out of range to inspect.'] = '대상과의 거리가 멀어 살펴보기를 실행할 수 없습니다.'
+	L["You can't inspect while dead."] = '죽은 상태에선 살펴보기를 할 수 없습니다.'
 	L[" Inspect. Sometimes this work will take few second by waiting server's response."] = ' 유저를 살펴봅니다. 서버의 응답을 기다리느라 시간이 조금 걸릴 수도 있습니다.'
 	L['Mouseover Inspect needs to freeze mouse moving until inspect is over.'] = '|cff2eb7e4마우스오버 살펴보기|r는 살펴보기가 끝날 때 까지 |cffff5675마우스를 유저에게서 떼면 안됩니다|r.'
 	L['Mouseover Inspect is canceled because cursor left user to inspect.'] = '마우스가 살펴보던 마우스오버 대상에게서 이탈하여 |cffff5675살펴보기가 취소되었습니다|r.'
+	
+	L['Hide Watchframe because of entering boss battle.'] = '보스와의 전투를 감지하여 퀘스트프레임을 숨깁니다.'
 end
 
 
 do	--Datatexts
 	L['Friends'] = '친구'
 	CRIT_ABBR = '크리'
-	L['Hit'] = '적중'
 	MANA_REGEN = '마젠'
-	L['SpellHaste'] = '주문가속'
 	L['Stats'] = '모든 능력치'
 end
 
